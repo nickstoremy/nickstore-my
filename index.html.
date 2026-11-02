@@ -1,0 +1,296 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NickStore.My | Premium Gaming Marketplace</title>
+<style>
+:root {
+  --bg:#08090c;
+  --panel:#111319;
+  --silver:#d9dce3;
+  --muted:#9297a3;
+  --line:#272b35;
+  --accent:#aeb7c8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:#f5f6f8;
+  font-family:Arial,Helvetica,sans-serif;
+}
+header{
+  height:75px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:0 7%;
+  border-bottom:1px solid var(--line);
+  background:#0b0c10;
+}
+.logo{font-size:22px;font-weight:900;letter-spacing:1px}
+.logo span{color:#aab4c5}
+nav a{
+  color:#b9bdc7;text-decoration:none;
+  margin-left:25px;font-size:13px;
+}
+.hero{
+  padding:90px 8% 80px;
+  background:
+  radial-gradient(ellipse at 80% 30%,#343c503d,transparent 45%),
+  linear-gradient(120deg,#11141c,#08090c 70%);
+  border-bottom:1px solid var(--line);
+}
+.tag{
+  color:#aebbd0;font-size:11px;
+  letter-spacing:3px;font-weight:bold;
+}
+.hero h1{
+  font-size:clamp(42px,7vw,76px);
+  line-height:1.05;margin:22px 0;
+  max-width:750px;
+}
+.hero h1 span{color:#aebbd0}
+.hero p{color:var(--muted);line-height:1.8;max-width:500px}
+.btn{
+  display:inline-block;margin-top:28px;
+  padding:15px 24px;background:#dce1eb;
+  color:#08090c;text-decoration:none;
+  font-weight:bold;font-size:12px;
+  border-radius:5px;
+}
+.section{padding:65px 7%}
+.section-head{
+  display:flex;justify-content:space-between;
+  align-items:end;gap:15px;margin-bottom:28px;
+}
+.section h2{font-size:28px}
+.section-head p{color:var(--muted);font-size:12px;margin-top:8px}
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}
+.filter{
+  border:1px solid var(--line);background:var(--panel);
+  color:#b9bdc7;padding:10px 16px;
+  border-radius:5px;cursor:pointer;
+}
+.filter.active{background:#dce1eb;color:#08090c}
+.search{
+  width:100%;padding:14px 16px;
+  background:#111319;border:1px solid var(--line);
+  color:white;border-radius:5px;margin-bottom:25px;
+  outline:none;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:18px;
+}
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:9px;overflow:hidden;
+  transition:.2s;
+}
+.card:hover{transform:translateY(-4px);border-color:#758096}
+.card-image{
+  height:155px;display:flex;align-items:center;
+  justify-content:center;font-size:48px;
+  background:linear-gradient(140deg,#30394b,#11141c);
+  position:relative;
+}
+.status{
+  position:absolute;top:12px;left:12px;
+  background:#26372e;color:#a5e0b7;
+  font-size:10px;padding:6px 9px;border-radius:3px;
+}
+.card-body{padding:18px}
+.category{font-size:10px;color:#aebbd0;letter-spacing:2px}
+.card h3{font-size:17px;margin:10px 0}
+.desc{font-size:12px;color:var(--muted);line-height:1.6}
+.price{font-size:21px;font-weight:bold;margin-top:17px}
+.buy{
+  display:block;text-align:center;
+  margin-top:15px;padding:12px;
+  background:#dce1eb;color:#08090c;
+  text-decoration:none;font-weight:bold;
+  font-size:11px;border-radius:4px;
+}
+.empty{color:var(--muted);padding:25px 0}
+.features{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:15px;margin-top:30px;
+}
+.feature{
+  border:1px solid var(--line);background:var(--panel);
+  padding:24px;border-radius:7px;
+}
+.feature h3{font-size:15px;margin-bottom:10px}
+.feature p{font-size:12px;color:var(--muted);line-height:1.7}
+footer{
+  border-top:1px solid var(--line);
+  padding:30px 7%;color:var(--muted);
+  font-size:12px;display:flex;
+  justify-content:space-between;gap:15px;flex-wrap:wrap;
+}
+@media(max-width:600px){
+  header{padding:0 5%}
+  nav a{margin-left:10px;font-size:11px}
+  .hero{padding:65px 6%}
+  .section{padding:48px 5%}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">NICKSTORE<span>.MY</span></div>
+  <nav>
+    <a href="#home">HOME</a>
+    <a href="#market">MARKETPLACE</a>
+    <a href="#contact">CONTACT</a>
+  </nav>
+</header>
+
+<section class="hero" id="home">
+  <div class="tag">YOUR TRUSTED GAMING MARKETPLACE</div>
+  <h1>LEVEL UP YOUR <span>GAME.</span></h1>
+  <p>
+    Discover premium gaming accounts at NickStore.My.
+    Browse, compare and find your next gaming account
+    with a simple and convenient buying experience.
+  </p>
+  <a href="#market" class="btn">EXPLORE MARKETPLACE ↗</a>
+</section>
+
+<section class="section" id="market">
+  <div class="section-head">
+    <div>
+      <h2>Marketplace.</h2>
+      <p>Find your next gaming account.</p>
+    </div>
+    <div class="tag">NICKSTORE / 001</div>
+  </div>
+
+  <div class="filters">
+    <button class="filter active" onclick="setFilter('ALL',this)">ALL</button>
+    <button class="filter" onclick="setFilter('MLBB',this)">MOBILE LEGENDS</button>
+    <button class="filter" onclick="setFilter('PUBG',this)">PUBG MOBILE</button>
+  </div>
+
+  <input class="search" id="search"
+    placeholder="Search accounts..."
+    oninput="render()">
+
+  <div class="grid" id="products"></div>
+</section>
+
+<section class="section">
+  <div class="tag">WHY NICKSTORE</div>
+  <h2 style="margin-top:12px">Gaming made simple.</h2>
+  <div class="features">
+    <div class="feature">
+      <h3>01 / Easy Purchase</h3>
+      <p>Contact us directly through WhatsApp to enquire about an account.</p>
+    </div>
+    <div class="feature">
+      <h3>02 / Clear Listings</h3>
+      <p>Browse account categories, descriptions and displayed prices.</p>
+    </div>
+    <div class="feature">
+      <h3>03 / Customer Support</h3>
+      <p>Get assistance with your purchase enquiries through our team.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="contact">
+  <div class="tag">LET'S CONNECT</div>
+  <h2 style="margin-top:12px">Ready to upgrade?</h2>
+  <p style="color:var(--muted);margin-top:12px">
+    Have a question? Contact NickStore.My.
+  </p>
+  <a class="btn" id="contactButton" href="#">CONTACT US ↗</a>
+</section>
+
+<footer>
+  <div><b>NICKSTORE.MY</b> — Premium Gaming Marketplace</div>
+  <div>© 2026 NickStore.My. All rights reserved.</div>
+</footer>
+
+<script>
+// DEMO LISTINGS — replace with your real accounts later.
+const WHATSAPP_NUMBER = "60XXXXXXXXX";
+
+const listings = [
+  {
+    name:"MLBB Premium Account",
+    category:"MLBB",
+    description:"Example listing. Replace with actual account details.",
+    price:100,
+    emoji:"⚔️"
+  },
+  {
+    name:"MLBB Collection Account",
+    category:"MLBB",
+    description:"Example listing. Replace with actual account details.",
+    price:150,
+    emoji:"🏆"
+  },
+  {
+    name:"PUBG Mobile Account",
+    category:"PUBG",
+    description:"Example listing. Replace with actual account details.",
+    price:120,
+    emoji:"🎯"
+  }
+];
+
+let currentFilter="ALL";
+
+function setFilter(category,button){
+  currentFilter=category;
+  document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+  render();
+}
+
+function render(){
+  const query=document.getElementById("search").value.toLowerCase();
+  const results=listings.filter(item=>
+    (currentFilter==="ALL"||item.category===currentFilter)&&
+    item.name.toLowerCase().includes(query)
+  );
+
+  const container=document.getElementById("products");
+
+  if(!results.length){
+    container.innerHTML='<p class="empty">No matching accounts found.</p>';
+    return;
+  }
+
+  container.innerHTML=results.map(item=>`
+    <div class="card">
+      <div class="card-image">
+        <span class="status">DEMO LISTING</span>
+        ${item.emoji}
+      </div>
+      <div class="card-body">
+        <div class="category">${item.category}</div>
+        <h3>${item.name}</h3>
+        <p class="desc">${item.description}</p>
+        <div class="price">RM ${item.price.toFixed(2)}</div>
+        <a class="buy" target="_blank"
+          href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi NickStore.My, I am interested in '+item.name)}">
+          ENQUIRE NOW ↗
+        </a>
+      </div>
+    </div>
+  `).join("");
+}
+
+document.getElementById("contactButton").href=
+  "https://wa.me/"+WHATSAPP_NUMBER;
+
+render();
+</script>
+</body>
+</html>
