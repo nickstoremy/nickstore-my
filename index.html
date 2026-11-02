@@ -344,53 +344,125 @@ footer{
  </div>
 </footer>
 
-<script>
-const WHATSAPP_NUMBER="60XXXXXXXXX";
-const listings=[
- {name:"MLBB Premium Account",category:"MLBB",description:"Demo listing — replace with real account details.",price:100,emoji:"⚔️"},
- {name:"MLBB Collection Account",category:"MLBB",description:"Demo listing — replace with real account details.",price:150,emoji:"🏆"},
- {name:"PUBG Mobile Account",category:"PUBG",description:"Demo listing — replace with real account details.",price:120,emoji:"🎯"}
-];
-let currentFilter="ALL";
 
-function setFilter(category,button){
- currentFilter=category;
- document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
- if(button)button.classList.add("active");
- else document.querySelectorAll(".filter").forEach(b=>{
-  if(b.textContent.includes(category)||category==="ALL"&&b.textContent==="ALL GAMES")b.classList.add("active");
- });
- render();
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const WHATSAPP_NUMBER = "60XXXXXXXXX";
+
+const db = window.supabase.createClient(
+  "https://tvtnhyvhndocpjicukhw.supabase.co",
+  "sb_publishable_79X_gnANUwuMShTEXcVjEQ_N4c5n_Gr"
+);
+
+let listings = [];
+let currentFilter = "ALL";
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  })[char]);
 }
-function render(){
- const q=document.getElementById("search").value.toLowerCase();
- const found=listings.filter(x=>
-  (currentFilter==="ALL"||x.category===currentFilter)&&
-  (x.name+" "+x.description).toLowerCase().includes(q)
- );
- const container=document.getElementById("products");
- if(!found.length){
-  container.innerHTML='<p class="empty">No matching accounts found.</p>';return;
- }
- container.innerHTML=found.map(x=>`
- <article class="card">
-  <div class="card-art ${x.category==="PUBG"?"pubg-art":""}">
-   <span class="card-status">DEMO LISTING</span>${x.emoji}
-  </div>
-  <div class="card-content">
-   <div class="card-type">${x.category}</div>
-   <h3>${x.name}</h3>
-   <p class="card-desc">${x.description}</p>
-   <div class="card-bottom">
-    <div class="price">RM ${x.price.toFixed(2)}</div>
-    <a class="buy" target="_blank" rel="noopener"
-    href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi NickStore.My, I am interested in "+x.name)}">ENQUIRE ↗</a>
-   </div>
-  </div>
- </article>`).join("");
+
+function setFilter(category, button) {
+  currentFilter = category;
+  document.querySelectorAll(".filter").forEach(b =>
+    b.classList.remove("active")
+  );
+
+  if (button) {
+    button.classList.add("active");
+  } else {
+    document.querySelectorAll(".filter").forEach(b => {
+      if (
+        category === "ALL" && b.textContent === "ALL GAMES" ||
+        b.textContent.includes(category)
+      ) b.classList.add("active");
+    });
+  }
+  render();
 }
-document.getElementById("contactButton").href="https://wa.me/"+WHATSAPP_NUMBER;
-render();
+
+function render() {
+  const q = document.getElementById("search").value.toLowerCase();
+
+  const found = listings.filter(x =>
+    (currentFilter === "ALL" || x.game === currentFilter) &&
+    (x.name + " " + (x.description || "")).toLowerCase().includes(q)
+  );
+
+  const container = document.getElementById("products");
+
+  if (!found.length) {
+    container.innerHTML =
+      '<p class="empty">No matching accounts found.</p>';
+    return;
+  }
+
+  container.innerHTML = found.map(x => {
+    const status = x.status || "available";
+    const image = x.image_url && /^https:\/\//i.test(x.image_url)
+      ? `<img src="${escapeHTML(x.image_url)}" alt="Account image">`
+      : (x.game === "PUBG" ? "🎯" : "⚔️");
+
+    const canBuy = status === "available";
+    const numberReady = /^60\d{8,12}$/.test(WHATSAPP_NUMBER);
+
+    const enquiry = canBuy && numberReady
+      ? `<a class="buy" target="_blank" rel="noopener"
+          href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+            "Hi NickStore.My, I am interested in " + x.name
+          )}">ENQUIRE ↗</a>`
+      : `<span class="buy" style="opacity:.6">
+          ${canBuy ? "WHATSAPP SOON" : status.toUpperCase()}
+        </span>`;
+
+    return `
+      <article class="card">
+        <div class="card-art ${x.game === "PUBG" ? "pubg-art" : ""}">
+          <span class="card-status">${escapeHTML(status.toUpperCase())}</span>
+          ${image}
+        </div>
+        <div class="card-content">
+          <div class="card-type">${escapeHTML(x.game)}</div>
+          <h3>${escapeHTML(x.name)}</h3>
+          <p class="card-desc">${escapeHTML(x.description || "")}</p>
+          <div class="card-bottom">
+            <div class="price">RM ${Number(x.price).toFixed(2)}</div>
+            ${enquiry}
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+}
+
+async function loadListings() {
+  const container = document.getElementById("products");
+  container.innerHTML = '<p class="empty">Loading collection...</p>';
+
+  const { data, error } = await db
+    .from("products")
+    .select("id,game,name,description,price,status,image_url,created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    container.innerHTML =
+      '<p class="empty">Unable to load products. Please try again later.</p>';
+    console.error(error);
+    return;
+  }
+
+  listings = data || [];
+  render();
+}
+
+document.getElementById("contactButton").href =
+  /^60\d{8,12}$/.test(WHATSAPP_NUMBER)
+    ? "https://wa.me/" + WHATSAPP_NUMBER
+    : "#market";
+
+loadListings();
 </script>
+
 </body>
 </html>
