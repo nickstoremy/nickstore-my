@@ -90,9 +90,22 @@ button:disabled{opacity:.5}
           <option value="sold">Sold</option>
         </select>
 
-        <label>Product image</label>
-        <input id="image" type="file" accept="image/*">
-        <p class="muted">Leave image empty when editing to keep the current image.</p>
+        <<label>Cover Image</label>
+<input id="image" type="file" accept="image/*">
+<p class="muted">Main image shown on the product card.</p>
+
+<label>Album Images (Multiple)</label>
+<input id="gallery" type="file" accept="image/*" multiple>
+<p class="muted">Select multiple screenshots for the account album.</p>
+
+<label>Full Specifications</label>
+<textarea id="specifications" placeholder="Rank: Mythical Glory
+Total Skins: 120
+Total Heroes: 98
+Rare Skins: 15
+Account Level: 75
+Login Method: Moonton"></textarea>
+<p class="muted">One specification per line. Example: Rank: Mythical Glory.</p>
 
         <div class="actions">
           <button type="submit" id="saveBtn">Save Product</button>
