@@ -85,9 +85,9 @@ button{padding:10px 12px}
 
 <label>Status</label>
 <select id="status">
-<option value="Available">Available</option>
-<option value="Reserved">Reserved</option>
-<option value="Sold">Sold</option>
+<option value="available">Available</option>
+<option value="reserved">Reserved</option>
+<option value="sold">Sold</option>
 </select>
 
 <label>Cover Image</label>
@@ -105,7 +105,7 @@ Total Heroes: 98
 Rare Skins: 15
 Account Level: 75
 Login Method: Moonton"></textarea>
-<p class="muted">One specification per line. Example: Rank: Mythical Glory.</p>
+<p class="muted">One specification per line.</p>
 
 <button id="saveBtn" type="submit">SAVE PRODUCT</button>
 <button type="button" class="secondary" id="cancelBtn">CANCEL</button>
@@ -131,216 +131,221 @@ const $ = id => document.getElementById(id);
 let editingId = null;
 
 function message(text,error=false){
-$("message").textContent=text;
-$("message").style.color=error?"#ff7777":"#9be69b";
+  $("message").textContent=text;
+  $("message").style.color=error?"#ff7777":"#9be69b";
 }
 
 function escapeHTML(value){
-return String(value??"").replace(/[&<>"']/g,char=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-})[char]);
+  return String(value??"").replace(/[&<>"']/g,char=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  })[char]);
 }
 
 async function checkLogin(){
-const {data:{session}}=await db.auth.getSession();
+  const {data:{session}}=await db.auth.getSession();
 
-if(session){
-$("loginSection").classList.add("hidden");
-$("dashboard").classList.remove("hidden");
-await loadProducts();
-}else{
-$("loginSection").classList.remove("hidden");
-$("dashboard").classList.add("hidden");
-}
+  if(session){
+    $("loginSection").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+    await loadProducts();
+  }else{
+    $("loginSection").classList.remove("hidden");
+    $("dashboard").classList.add("hidden");
+  }
 }
 
 $("loginForm").addEventListener("submit",async e=>{
-e.preventDefault();
+  e.preventDefault();
 
-const {error}=await db.auth.signInWithPassword({
-email:$("email").value,
-password:$("password").value
-});
+  const {error}=await db.auth.signInWithPassword({
+    email:$("email").value,
+    password:$("password").value
+  });
 
-if(error){
-alert(error.message);
-return;
-}
-await checkLogin();
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  await checkLogin();
 });
 
 $("logoutBtn").addEventListener("click",async()=>{
-await db.auth.signOut();
-location.reload();
+  await db.auth.signOut();
+  location.reload();
 });
 
 async function loadProducts(){
-const {data,error}=await db.from("products")
-.select("*").order("created_at",{ascending:false});
+  const {data,error}=await db.from("products")
+    .select("*").order("created_at",{ascending:false});
 
-if(error){
-$("productList").textContent=error.message;
-return;
-}
+  if(error){
+    $("productList").textContent=error.message;
+    return;
+  }
 
-if(!data||data.length===0){
-$("productList").textContent="No products yet. Add your first listing!";
-return;
-}
+  if(!data||data.length===0){
+    $("productList").textContent="No products yet. Add your first listing!";
+    return;
+  }
 
-$("productList").innerHTML=data.map(p=>`
-<div class="product">
-<img src="${escapeHTML(p.image_url||"")}" alt="Product image">
-<div class="product-info">
-<strong>${escapeHTML(p.name)}</strong>
-<p>${escapeHTML(p.game)} | RM${Number(p.price).toFixed(2)}</p>
-<p>Status: ${escapeHTML(p.status)}</p>
-</div>
-<div>
-<button onclick="editProduct('${p.id}')">EDIT</button>
-<button class="danger" onclick="deleteProduct('${p.id}')">DELETE</button>
-</div>
-</div>
-`).join("");
+  $("productList").innerHTML=data.map(p=>`
+    <div class="product">
+      <img src="${escapeHTML(p.image_url||"")}" alt="Product image">
+      <div class="product-info">
+        <strong>${escapeHTML(p.name)}</strong>
+        <p>${escapeHTML(p.game)} | RM${Number(p.price).toFixed(2)}</p>
+        <p>Status: ${escapeHTML(p.status)}</p>
+      </div>
+      <div>
+        <button onclick="editProduct('${p.id}')">EDIT</button>
+        <button class="danger" onclick="deleteProduct('${p.id}')">DELETE</button>
+      </div>
+    </div>
+  `).join("");
 }
 
 async function editProduct(id){
-const {data:p,error}=await db.from("products")
-.select("*").eq("id",id).single();
+  const {data:p,error}=await db.from("products")
+    .select("*").eq("id",id).single();
 
-if(error){
-alert(error.message);
-return;
-}
+  if(error){
+    alert(error.message);
+    return;
+  }
 
-editingId=id;
-$("game").value=p.game||"MLBB";
-$("name").value=p.name||"";
-$("description").value=p.description||"";
-$("price").value=p.price||"";
-$("status").value=p.status||"Available";
+  editingId=id;
+  $("game").value=p.game||"MLBB";
+  $("name").value=p.name||"";
+  $("description").value=p.description||"";
+  $("price").value=p.price||"";
+  $("status").value=(p.status||"available").toLowerCase();
 
-const specs=p.specifications||{};
-$("specifications").value=Object.entries(specs)
-.map(([key,value])=>key+": "+value).join("\n");
+  const specs=p.specifications||{};
+  $("specifications").value=Object.entries(specs)
+    .map(([key,value])=>key+": "+value).join("\n");
 
-$("image").value="";
-$("gallery").value="";
-$("formTitle").textContent="Edit Product";
-$("saveBtn").textContent="UPDATE PRODUCT";
+  $("image").value="";
+  $("gallery").value="";
+  $("formTitle").textContent="Edit Product";
+  $("saveBtn").textContent="UPDATE PRODUCT";
 
-window.scrollTo({top:0,behavior:"smooth"});
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function resetForm(){
-editingId=null;
-$("productForm").reset();
-$("formTitle").textContent="Add New Product";
-$("saveBtn").textContent="SAVE PRODUCT";
-message("");
+  editingId=null;
+  $("productForm").reset();
+  $("formTitle").textContent="Add New Product";
+  $("saveBtn").textContent="SAVE PRODUCT";
+  message("");
 }
 
 $("cancelBtn").addEventListener("click",resetForm);
 
 async function uploadImage(file){
-if(!file.type.startsWith("image/")){
-throw new Error("Please select an image.");
-}
+  if(!file.type.startsWith("image/")){
+    throw new Error("Please select an image.");
+  }
 
-if(file.size>5*1024*1024){
-throw new Error("Each image must be smaller than 5 MB.");
-}
+  if(file.size>5*1024*1024){
+    throw new Error("Each image must be smaller than 5 MB.");
+  }
 
-const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-const path=Date.now()+"-"+crypto.randomUUID()+"-"+safeName;
+  const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+  const path=Date.now()+"-"+crypto.randomUUID()+"-"+safeName;
 
-const {error}=await db.storage.from("product-images").upload(path,file);
-if(error)throw error;
+  const {error}=await db.storage.from("product-images").upload(path,file);
+  if(error)throw error;
 
-return db.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+  return db.storage.from("product-images").getPublicUrl(path).data.publicUrl;
 }
 
 $("productForm").addEventListener("submit",async e=>{
-e.preventDefault();
+  e.preventDefault();
 
-$("saveBtn").disabled=true;
-message("Saving product...");
+  $("saveBtn").disabled=true;
+  message("Saving product...");
 
-try{
-let imageUrl=null;
-let galleryUrls=[];
+  try{
+    let imageUrl=null;
+    let galleryUrls=[];
 
-if(editingId){
-const {data,error}=await db.from("products")
-.select("image_url,gallery_urls")
-.eq("id",editingId).single();
+    if(editingId){
+      const {data,error}=await db.from("products")
+        .select("image_url,gallery_urls")
+        .eq("id",editingId).single();
 
-if(error)throw error;
+      if(error)throw error;
 
-imageUrl=data.image_url||null;
-galleryUrls=Array.isArray(data.gallery_urls)?data.gallery_urls:[];
-}
+      imageUrl=data.image_url||null;
+      galleryUrls=Array.isArray(data.gallery_urls)?data.gallery_urls:[];
+    }
 
-const coverFile=$("image").files[0];
-if(coverFile){
-imageUrl=await uploadImage(coverFile);
-}
+    const coverFile=$("image").files[0];
 
-const galleryFiles=Array.from($("gallery").files);
-for(const photo of galleryFiles){
-galleryUrls.push(await uploadImage(photo));
-}
+    if(coverFile){
+      imageUrl=await uploadImage(coverFile);
+    }
 
-const specs={};
-$("specifications").value.split("\n").forEach(line=>{
-const separator=line.indexOf(":");
+    const galleryFiles=Array.from($("gallery").files);
 
-if(separator>-1){
-const key=line.slice(0,separator).trim();
-const value=line.slice(separator+1).trim();
-if(key&&value)specs[key]=value;
-}
-});
+    for(const photo of galleryFiles){
+      galleryUrls.push(await uploadImage(photo));
+    }
 
-const product={
-game:$("game").value,
-name:$("name").value.trim(),
-description:$("description").value.trim(),
-price:Number($("price").value),
-status:$("status").value,
-image_url:imageUrl,
-gallery_urls:galleryUrls,
-specifications:specs
-};
+    const specs={};
 
-const result=editingId
-?await db.from("products").update(product).eq("id",editingId)
-:await db.from("products").insert(product);
+    $("specifications").value.split("\n").forEach(line=>{
+      const separator=line.indexOf(":");
 
-if(result.error)throw result.error;
+      if(separator>-1){
+        const key=line.slice(0,separator).trim();
+        const value=line.slice(separator+1).trim();
 
-message("Product saved successfully!");
-resetForm();
-await loadProducts();
+        if(key&&value)specs[key]=value;
+      }
+    });
 
-}catch(error){
-message(error.message,true);
-}finally{
-$("saveBtn").disabled=false;
-}
+    const product={
+      game:$("game").value,
+      name:$("name").value.trim(),
+      description:$("description").value.trim(),
+      price:Number($("price").value),
+      status:$("status").value,
+      image_url:imageUrl,
+      gallery_urls:galleryUrls,
+      specifications:specs
+    };
+
+    const result=editingId
+      ?await db.from("products").update(product).eq("id",editingId)
+      :await db.from("products").insert(product);
+
+    if(result.error)throw result.error;
+
+    message("Product saved successfully!");
+    resetForm();
+    await loadProducts();
+
+  }catch(error){
+    message(error.message,true);
+  }finally{
+    $("saveBtn").disabled=false;
+  }
 });
 
 async function deleteProduct(id){
-if(!confirm("Are you sure you want to delete this product?"))return;
+  if(!confirm("Are you sure you want to delete this product?"))return;
 
-const {error}=await db.from("products").delete().eq("id",id);
+  const {error}=await db.from("products").delete().eq("id",id);
 
-if(error){
-alert(error.message);
-return;
-}
+  if(error){
+    alert(error.message);
+    return;
+  }
 
-await loadProducts();
+  await loadProducts();
 }
 
 checkLogin();
