@@ -456,10 +456,13 @@ async function loadListings() {
   render();
 }
 
-document.getElementById("contactButton").href =
-  /^60\d{8,12}$/.test(WHATSAPP_NUMBER)
+const contactButton = document.getElementById("contactButton");
+
+if (contactButton) {
+  contactButton.href = /^60\d{8,12}$/.test(WHATSAPP_NUMBER)
     ? "https://wa.me/" + WHATSAPP_NUMBER
     : "#market";
+}
 
 loadListings();
 </script>
